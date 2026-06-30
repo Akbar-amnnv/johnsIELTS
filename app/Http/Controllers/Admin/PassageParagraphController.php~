@@ -1,0 +1,34 @@
+Route::get(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs',
+[PassageParagraphController::class, 'index']
+)->name('reading-tests.passages.paragraphs.index');
+
+Route::get(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs/create',
+[PassageParagraphController::class, 'create']
+)->name('reading-tests.passages.paragraphs.create');
+
+Route::post(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs',
+[PassageParagraphController::class, 'store']
+)->name('reading-tests.passages.paragraphs.store');
+
+Route::get(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs/{paragraph}/edit',
+[PassageParagraphController::class, 'edit']
+)->name('reading-tests.passages.paragraphs.edit');
+
+Route::put(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs/{paragraph}',
+[PassageParagraphController::class, 'update']
+)->name('reading-tests.passages.paragraphs.update');
+
+Route::delete(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs/{paragraph}',
+[PassageParagraphController::class, 'destroy']
+)->name('reading-tests.passages.paragraphs.destroy');
+
+Route::post(
+'reading-tests/{reading_test}/passages/{passage}/paragraphs/store-split',
+[PassageParagraphController::class, 'storeSplit']
+)->name('reading-tests.passages.paragraphs.store-split');

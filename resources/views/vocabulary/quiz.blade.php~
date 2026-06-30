@@ -1,0 +1,199 @@
+@extends('layouts.app')
+
+@section('content')
+    <div class="max-w-4xl mx-auto py-10 px-4">
+        <div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between gap-4">
+            <div>
+                <a href="{{ route('vocabulary.index') }}" class="text-sm text-gray-500 hover:text-gray-700">
+                    ← Back to Vocabulary
+                </a>
+
+                <h1 class="text-3xl font-bold text-gray-900 mt-2">
+                    {{ $category->name }} {{ ucfirst($quizType) }} Quiz
+                </h1>
+
+                <p class="text-gray-600 mt-2">
+                    {{ $quizType === 'translation'
+                        ? 'Choose the correct translation for each word.'
+                        : 'Choose the correct word for each definition.' }}
+                </p>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <div class="px-4 py-2 rounded-full bg-blue-100 text-blue-700 font-semibold text-sm">
+                    <span id="question-progress">1</span>
+                </div>
+
+                <div class="px-4 py-2 rounded-full bg-red-100 text-red-700 font-bold text-sm">
+                    ⏳ <span id="timer">30</span>s
+                </div>
+            </div>
+        </div>
+        <div class="mb-6">
+            <div class="flex justify-between text-sm text-gray-500 mb-2">
+              
+                <span>Progress</span>
+            </div>
+
+            <div class="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+                <div id="progress-bar"
+                     class="h-full bg-amber-500 transition-all duration-500"
+                     style="width: 10%">
+                </div>
+            </div>
+        </div>
+        <form id="quiz-form"
+              method="POST"
+              action="{{ $quizType === 'translation'
+                        ? route('vocabulary.translation.submit', $category)
+                        : route('vocabulary.meaning.submit', $category) }}">
+            @csrf
+
+            @foreach($questions as $question)
+                <input type="hidden"
+                       name="answers[{{ $question['vocabulary_id'] }}]"
+                       id="answer-input-{{ $question['vocabulary_id'] }}"
+                       value="">
+            @endforeach
+
+            <div class="bg-white border rounded-3xl shadow-sm p-6 md:p-8">
+                <div class="mb-6">
+                    <p class="text-xs uppercase tracking-[0.2em] text-gray-400 mb-2">
+                        <span id="question-label">Question 1</span>
+                    </p>
+
+                    <h2 id="question-prompt" class="text-2xl md:text-3xl font-bold text-gray-900 leading-10">
+                        {{ $questions[0]['prompt'] ?? '' }}
+                    </h2>
+                </div>
+
+                <div id="options-container" class="grid gap-4">
+                </div>
+
+                <div class="mt-8 flex items-center justify-between gap-4">
+                    <div class="text-sm text-gray-500">
+                        Answer to continue. If time runs out, the next question will open automatically.
+                    </div>
+
+                    <button type="button"
+                            id="skip-btn"
+                            class="px-5 py-3 rounded-xl bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition">
+                        Skip
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const questions = @json($questions);
+        const totalQuestions = questions.length;
+        const timePerQuestion = 30;
+
+        let currentIndex = 0;
+        let timeLeft = timePerQuestion;
+        let timerInterval = null;
+        let locked = false;
+
+        const timerEl = document.getElementById('timer');
+        const progressText = document.getElementById('question-progress');
+        const labelEl = document.getElementById('question-label');
+        const promptEl = document.getElementById('question-prompt');
+        const optionsContainer = document.getElementById('options-container');
+        const form = document.getElementById('quiz-form');
+        const skipBtn = document.getElementById('skip-btn');
+        const progressBar = document.getElementById('progress-bar');
+
+        function updateProgress() {
+            const percent = ((currentIndex + 1) / totalQuestions) * 100;
+            progressBar.style.width = percent + "%";
+            progressText.textContent = `${currentIndex + 1} / ${totalQuestions}`;
+        }
+
+        function updateTimerUI() {
+            timerEl.textContent = timeLeft;
+
+            const timerWrapper = timerEl.parentElement;
+            timerWrapper.classList.remove('bg-red-100', 'text-red-700', 'bg-yellow-100', 'text-yellow-700', 'animate-pulse');
+
+            if (timeLeft <= 5) {
+                timerWrapper.classList.add('bg-red-100', 'text-red-700', 'animate-pulse');
+            } else if (timeLeft <= 10) {
+                timerWrapper.classList.add('bg-yellow-100', 'text-yellow-700');
+            } else {
+                timerWrapper.classList.add('bg-red-100', 'text-red-700');
+            }
+        }
+
+        function restartTimer() {
+            clearInterval(timerInterval);
+
+            timerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerUI();
+
+                if (timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    goToNextQuestion();
+                }
+            }, 1000);
+        }
+
+        function renderQuestion() {
+            if (currentIndex >= totalQuestions) {
+                form.submit();
+                return;
+            }
+
+            locked = false;
+            timeLeft = timePerQuestion;
+
+            const question = questions[currentIndex];
+
+            updateTimerUI();
+            updateProgress();
+
+            labelEl.textContent = `Question ${currentIndex + 1}`;
+            promptEl.textContent = question.prompt;
+
+            optionsContainer.innerHTML = '';
+
+            question.options.forEach((option) => {
+                const button = document.createElement('button');
+                button.type = 'button';
+                button.className = 'w-full text-left p-4 rounded-2xl border bg-white transition hover:border-amber-400 hover:bg-amber-50';
+                button.textContent = option;
+
+                button.addEventListener('click', () => {
+                    if (locked) return;
+                    locked = true;
+
+                    const hiddenInput = document.getElementById(`answer-input-${question.vocabulary_id}`);
+                    hiddenInput.value = option;
+
+                    button.classList.add('border-amber-600', 'bg-amber-100', 'ring-2', 'ring-amber-200');
+
+                    setTimeout(() => {
+                        goToNextQuestion();
+                    }, 500);
+                });
+
+                optionsContainer.appendChild(button);
+            });
+
+            restartTimer();
+        }
+
+        function goToNextQuestion() {
+            clearInterval(timerInterval);
+            currentIndex++;
+            renderQuestion();
+        }
+
+        skipBtn.addEventListener('click', () => {
+            goToNextQuestion();
+        });
+
+        renderQuestion();
+    </script>
+@endsection

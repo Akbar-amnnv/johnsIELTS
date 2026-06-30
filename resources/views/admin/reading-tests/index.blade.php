@@ -1,0 +1,72 @@
+@extends('layouts.admin')
+
+@section('content')
+
+    <div class="flex justify-between mb-4">
+        <h2 class="text-xl font-semibold">Reading Tests</h2>
+
+        <a href="{{ route('reading-tests.create') }}"
+           class="px-4 py-2 bg-blue-600 text-white rounded">
+            + Create Test
+        </a>
+    </div>
+
+    <table class="w-full bg-white rounded shadow">
+        <thead>
+        <tr class="border-b">
+            <th class="p-3 text-left">Title</th>
+            <th class="p-3 text-left">Module</th>
+            <th class="p-3 text-left">Duration</th>
+            <th class="p-3 text-left">Published</th>
+            <th class="p-3">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+        @forelse($tests as $test)
+            <tr class="border-b">
+                <td class="p-3">{{ $test->title }}</td>
+                <td class="p-3">{{ ucfirst($test->module_type) }}</td>
+                <td class="p-3">{{ $test->duration_minutes }} min</td>
+                <td class="p-3">
+                    {{ $test->is_published ? 'Yes' : 'No' }}
+                </td>
+                <td class="p-3 flex gap-3">
+
+                    <a href="{{ route('reading-tests.passages.index', $test) }}"
+                       class="text-purple-600 hover:underline">
+                        Passages
+                    </a>
+
+                    <a href="{{ route('reading-tests.edit', $test) }}"
+                       class="text-blue-600 hover:underline">
+                        Edit
+                    </a>
+
+                    <form method="POST"
+                          action="{{ route('reading-tests.destroy', $test) }}">
+                        @csrf
+                        @method('DELETE')
+
+                        <button class="text-red-600 hover:underline">
+                            Delete
+                        </button>
+                    </form>
+
+                </td>
+            </tr>
+        @empty
+            <tr>
+                <td colspan="4" class="p-3 text-center">
+                    No tests yet.
+                </td>
+            </tr>
+        @endforelse
+        </tbody>
+    </table>
+
+    <div class="mt-4">
+        {{ $tests->links() }}
+    </div>
+
+@endsection

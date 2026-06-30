@@ -1,0 +1,82 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\Vocabulary;
+use App\Models\VocabularyCategory;
+use Illuminate\Database\Seeder;
+
+class VocabularySeeder extends Seeder
+{
+    public function run(): void
+    {
+        $category = VocabularyCategory::firstOrCreate(
+            ['slug' => 'transport-urban-life'],
+            [
+                'name' => 'Transport & Urban Life',
+                'description' => 'Vocabulary related to transportation systems, urban development, and city life.',
+                'is_active' => true,
+            ]
+        );
+
+        $words = [
+
+            ['word'=>'public transport','translation'=>'jamoat transporti','definition'=>'System of buses, trains, and other transport for public use.','example'=>'Public transport is widely used in big cities.','difficulty'=>'easy'],
+
+            ['word'=>'traffic congestion','translation'=>'tirbandlik','definition'=>'Situation where too many vehicles cause slow movement.','example'=>'Traffic congestion is a major problem in urban areas.','difficulty'=>'easy'],
+
+            ['word'=>'infrastructure','translation'=>'infratuzilma','definition'=>'Basic physical systems like roads and bridges.','example'=>'The country invests heavily in infrastructure.','difficulty'=>'medium'],
+
+            ['word'=>'road safety','translation'=>'yo‘l xavfsizligi','definition'=>'Measures to prevent accidents on roads.','example'=>'Road safety campaigns reduce accidents.','difficulty'=>'easy'],
+
+            ['word'=>'vehicle ownership','translation'=>'transport vositasiga egalik','definition'=>'Possession of a private vehicle.','example'=>'Vehicle ownership is increasing rapidly.','difficulty'=>'medium'],
+
+            ['word'=>'fuel consumption','translation'=>'yoqilg‘i sarfi','definition'=>'Amount of fuel used by vehicles.','example'=>'Fuel consumption should be reduced.','difficulty'=>'medium'],
+
+            ['word'=>'air pollution','translation'=>'havo ifloslanishi','definition'=>'Contamination of air by harmful substances.','example'=>'Air pollution affects public health.','difficulty'=>'easy'],
+
+            ['word'=>'urban planning','translation'=>'shaharsozlik rejalashtirish','definition'=>'Design and organization of city areas.','example'=>'Urban planning improves city life.','difficulty'=>'medium'],
+
+            ['word'=>'pedestrian safety','translation'=>'piyodalar xavfsizligi','definition'=>'Protection of people walking on roads.','example'=>'Pedestrian safety is a top priority.','difficulty'=>'easy'],
+
+            ['word'=>'commuting','translation'=>'qatnov (ishga borib-kelish)','definition'=>'Traveling regularly between home and work.','example'=>'Commuting takes a lot of time.','difficulty'=>'easy'],
+
+            ['word'=>'transport network','translation'=>'transport tarmog‘i','definition'=>'Connected system of transport routes.','example'=>'The transport network is well developed.','difficulty'=>'medium'],
+
+            ['word'=>'high-speed rail','translation'=>'yuqori tezlikdagi temir yo‘l','definition'=>'Fast train system.','example'=>'High-speed rail connects major cities.','difficulty'=>'medium'],
+
+            ['word'=>'traffic management','translation'=>'transport oqimini boshqarish','definition'=>'Control of traffic flow.','example'=>'Traffic management reduces congestion.','difficulty'=>'medium'],
+
+            ['word'=>'carbon footprint','translation'=>'karbon izi','definition'=>'Amount of carbon emissions produced.','example'=>'We should reduce our carbon footprint.','difficulty'=>'medium'],
+
+            ['word'=>'parking facilities','translation'=>'avtoturargohlar','definition'=>'Designated places for parking vehicles.','example'=>'Parking facilities are limited.','difficulty'=>'easy'],
+
+            ['word'=>'road maintenance','translation'=>'yo‘llarni ta’mirlash','definition'=>'Keeping roads in good condition.','example'=>'Road maintenance is expensive.','difficulty'=>'medium'],
+
+            ['word'=>'mass transit','translation'=>'ommaviy transport','definition'=>'Public transport for large numbers of people.','example'=>'Mass transit systems reduce traffic.','difficulty'=>'medium'],
+
+            ['word'=>'transport efficiency','translation'=>'transport samaradorligi','definition'=>'Effectiveness of transport systems.','example'=>'Transport efficiency is improving.','difficulty'=>'medium'],
+
+            ['word'=>'travel demand','translation'=>'transportga bo‘lgan talab','definition'=>'Need for transportation services.','example'=>'Travel demand is rising.','difficulty'=>'medium'],
+
+            ['word'=>'logistics','translation'=>'logistika','definition'=>'Planning and management of goods transportation.','example'=>'Logistics is important for business.','difficulty'=>'easy'],
+
+        ];
+
+        foreach ($words as $item) {
+            Vocabulary::updateOrCreate(
+                [
+                    'vocabulary_category_id' => $category->id,
+                    'word' => $item['word'],
+                ],
+                [
+                    'translation' => $item['translation'],
+                    'definition' => $item['definition'],
+                    'example' => $item['example'],
+                    'difficulty' => $item['difficulty'],
+                    'is_active' => true,
+                ]
+            );
+        }
+    }
+}

@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>John's Ielts Admin</title>
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+<body class="bg-gray-100 min-h-screen">
+
+<div class="flex min-h-screen">
+
+    {{-- SIDEBAR --}}
+    <aside class="w-72 bg-white border-r border-gray-200 shadow-sm">
+        <div class="p-6 border-b border-gray-200">
+            <h1 class="text-2xl font-bold text-gray-800">John's Ielts</h1>
+            <p class="text-sm text-gray-500 mt-1">Admin Panel</p>
+        </div>
+
+        <nav class="p-4 space-y-2">
+            <a href="{{ route('reading-tests.index') }}"
+               class="block px-4 py-3 rounded-lg transition
+               {{ request()->routeIs('reading-tests.*') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-100' }}">
+                Reading Tests
+            </a>
+            <a href="{{ route('vocabulary-categories.index') }}"
+               class="block px-4 py-3 rounded-lg transition
+            {{ request()->routeIs('vocabulary-categories.*') ? 'bg-amber-50 text-amber-700 font-semibold' : 'text-gray-700 hover:bg-gray-100' }}">
+                Vocabulary
+            </a>
+            <a href="{{ route('reading.results.index') }}"
+               class="block px-4 py-3 rounded-lg transition
+               {{ request()->routeIs('reading.results.*') ? 'bg-blue-50 text-blue-700 font-semibold' : 'text-gray-700 hover:bg-gray-100' }}">
+                Results
+            </a>
+
+            <div class="px-4 pt-4 pb-2 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                Coming Soon
+            </div>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-lg text-gray-400 bg-gray-50 cursor-not-allowed">
+                Users
+            </a>
+
+            <a href="#"
+               class="block px-4 py-3 rounded-lg text-gray-400 bg-gray-50 cursor-not-allowed">
+                Analytics
+            </a>
+        </nav>
+    </aside>
+
+    {{-- MAIN CONTENT --}}
+    <main class="flex-1 min-w-0">
+        {{-- HEADER --}}
+        <header class="bg-white border-b border-gray-200 shadow-sm">
+            <div class="flex items-center justify-between px-6 py-4">
+                <div>
+                    <h2 class="text-lg font-semibold text-gray-800">
+                        Admin Dashboard
+                    </h2>
+                    <p class="text-sm text-gray-500">
+                        Manage reading tests, passages, questions, and results
+                    </p>
+                </div>
+
+                <div class="flex items-center gap-4">
+                    <span class="text-sm text-gray-600">
+                        {{ auth()->user()->name }}
+                    </span>
+
+                    <form method="POST" action="{{ route('logout') }}">
+                        @csrf
+                        <button class="text-red-600 text-sm hover:underline">
+                            Logout
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
+
+        {{-- CONTENT --}}
+        <div class="p-6">
+            @if(session('success'))
+                <div class="mb-4 p-4 rounded-lg bg-green-100 text-green-800 border border-green-200">
+                    {{ session('success') }}
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="mb-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-200">
+                    {{ session('error') }}
+                </div>
+            @endif
+
+            @if($errors->any())
+                <div class="mb-4 p-4 rounded-lg bg-red-100 text-red-800 border border-red-200">
+                    <ul class="list-disc ml-5 space-y-1">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            @yield('content')
+        </div>
+    </main>
+
+</div>
+
+</body>
+</html>

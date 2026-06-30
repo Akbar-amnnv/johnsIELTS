@@ -1,0 +1,123 @@
+@extends('layouts.admin')
+
+@section('content')
+    <div class="max-w-3xl">
+        <div class="mb-6">
+            <h2 class="text-2xl font-bold text-gray-800">Edit Question Group</h2>
+            <p class="text-sm text-gray-500 mt-1">
+                Reading Test: {{ $reading_test->title }}
+            </p>
+            <p class="text-sm text-gray-500">
+                Passage: {{ $passage->title }}
+            </p>
+        </div>
+
+        <form method="POST"
+              action="{{ route('reading-tests.passages.question-groups.update', [$reading_test, $passage, $question_group]) }}"
+              class="bg-white p-6 rounded-xl shadow space-y-5">
+            @csrf
+            @method('PUT')
+
+            <div>
+                <label for="type" class="block text-sm font-medium text-gray-700 mb-2">
+                    Question Type
+                </label>
+
+                @foreach(\App\Enums\QuestionGroupType::cases() as $type)
+
+                    <option value="{{ $type->value }}"
+                        {{ old('type', $questionGroup->type ?? '') === $type->value ? 'selected' : '' }}>
+
+                        {{ $type->label() }}
+
+                    </option>
+
+                @endforeach
+
+                @error('type')
+                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div>
+                <label for="instruction" class="block text-sm font-medium text-gray-700 mb-2">
+                    Instruction
+                </label>
+
+                <textarea id="instruction"
+                          name="instruction"
+                          rows="5"
+                          class="w-full border border-gray-300 rounded-lg px-4 py-2">{{ old('instruction', $question_group->instruction) }}</textarea>
+
+                @error('instruction')
+                <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                @enderror
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <label for="start_number" class="block text-sm font-medium text-gray-700 mb-2">
+                        Start Number
+                    </label>
+
+                    <input type="number"
+                           id="start_number"
+                           name="start_number"
+                           min="1"
+                           value="{{ old('start_number', $question_group->start_number) }}"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2">
+
+                    @error('start_number')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="end_number" class="block text-sm font-medium text-gray-700 mb-2">
+                        End Number
+                    </label>
+
+                    <input type="number"
+                           id="end_number"
+                           name="end_number"
+                           min="1"
+                           value="{{ old('end_number', $question_group->end_number) }}"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2">
+
+                    @error('end_number')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+
+                <div>
+                    <label for="sort_order" class="block text-sm font-medium text-gray-700 mb-2">
+                        Sort Order
+                    </label>
+
+                    <input type="number"
+                           id="sort_order"
+                           name="sort_order"
+                           min="1"
+                           value="{{ old('sort_order', $question_group->sort_order) }}"
+                           class="w-full border border-gray-300 rounded-lg px-4 py-2">
+
+                    @error('sort_order')
+                    <p class="text-red-600 text-sm mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <a href="{{ route('reading-tests.passages.question-groups.index', [$reading_test, $passage]) }}"
+                   class="px-4 py-2 bg-gray-200 text-gray-800 rounded-lg hover:bg-gray-300">
+                    Cancel
+                </a>
+
+                <button type="submit"
+                        class="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+                    Update Question Group
+                </button>
+            </div>
+        </form>
+    </div>
+@endsection

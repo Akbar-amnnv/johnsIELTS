@@ -1,0 +1,105 @@
+<?php
+
+namespace App\Http\Controllers\Admin;
+
+use App\Http\Controllers\Controller;
+use App\Models\QuestionGroup;
+use App\Models\Passage;
+use App\Models\ReadingTest;
+use Illuminate\Http\Request;
+
+class QuestionGroupController extends Controller
+{
+    public function index(ReadingTest $reading_test, Passage $passage)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        $groups = $passage->questionGroups()
+            ->orderBy('sort_order')
+            ->get();
+
+        return view('admin.question-groups.index', compact(
+            'reading_test',
+            'passage',
+            'groups'
+        ));
+    }
+
+    public function create(ReadingTest $reading_test, Passage $passage)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        return view('admin.question-groups.create', compact(
+            'reading_test',
+            'passage'
+        ));
+    }
+
+    public function store(Request $request, ReadingTest $reading_test, Passage $passage)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        $data = $request->validate([
+            'type' => ['required','string'],
+            'instruction' => ['required','string'],
+            'start_number' => ['required','integer','min:1'],
+            'end_number' => ['required','integer','min:1'],
+            'sort_order' => ['nullable','integer','min:1'],
+        ]);
+
+        $data['passage_id'] = $passage->id;
+        $data['sort_order'] = $data['sort_order'] ?? ($passage->questionGroups()->max('sort_order') + 1);
+
+        QuestionGroup::create($data);
+
+        return redirect()
+            ->route('reading-tests.passages.question-groups.index', [$reading_test,$passage])
+            ->with('success','Question group created.');
+    }
+
+    public function edit(ReadingTest $reading_test, Passage $passage, QuestionGroup $question_group)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        return view('admin.question-groups.edit', compact(
+            'reading_test',
+            'passage',
+            'question_group'
+        ));
+    }
+
+    public function update(Request $request, ReadingTest $reading_test, Passage $passage, QuestionGroup $question_group)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        $data = $request->validate([
+            'type' => ['required','string'],
+            'instruction' => ['required','string'],
+            'start_number' => ['required','integer'],
+            'end_number' => ['required','integer'],
+            'sort_order' => ['nullable','integer'],
+        ]);
+
+        $question_group->update($data);
+
+        return redirect()
+            ->route('reading-tests.passages.question-groups.index', [$reading_test,$passage])
+            ->with('success','Question group updated.');
+    }
+
+    public function destroy(ReadingTest $reading_test, Passage $passage, QuestionGroup $question_group)
+    {
+        $this->ensurePassageBelongsToTest($reading_test, $passage);
+
+        $question_group->delete();
+
+        return redirect()
+            ->route('reading-tests.passages.question-groups.index', [$reading_test,$passage])
+            ->with('success','Question group deleted.');
+    }
+
+    private function ensurePassageBelongsToTest(ReadingTest $reading_test, Passage $passage)
+    {
+        abort_if($passage->reading_test_id !== $reading_test->id,404);
+    }
+}

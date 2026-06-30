@@ -1,0 +1,78 @@
+@extends('layouts.admin')
+
+@section('content')
+
+    <h2 class="text-xl font-semibold mb-4">
+
+        Questions
+
+    </h2>
+
+    <p class="text-gray-500 mb-4">
+
+        Group: {{ $question_group->type }}
+
+    </p>
+
+    <form method="POST"
+          action="{{ route('questions.generate',[$reading_test,$passage,$question_group]) }}">
+
+        @csrf
+
+        <button class="px-4 py-2 bg-green-600 text-white rounded mb-4">
+
+            Generate Questions
+
+        </button>
+
+    </form>
+
+    <table class="w-full bg-white shadow rounded">
+
+        <thead>
+
+        <tr>
+
+            <th class="p-3 text-left">Question #</th>
+
+            <th class="p-3 text-left">Text</th>
+
+            <th class="p-3 text-left">Answer</th>
+
+        </tr>
+
+        </thead>
+
+        <tbody>
+
+        @foreach($questions as $question)
+
+            <tr class="border-b">
+
+                <td class="p-3">
+
+                    {{ $question->question_number }}
+
+                </td>
+
+                <td class="p-3">
+
+                    {{ $question->question_text }}
+
+                </td>
+
+                <td class="p-3">
+
+                    {{ $question->correct_answer }}
+
+                </td>
+
+            </tr>
+
+        @endforeach
+
+        </tbody>
+
+    </table>
+
+@endsection

@@ -1,0 +1,122 @@
+@extends('layouts.app')
+
+@section('content')
+
+    <div class="max-w-7xl mx-auto py-10 px-6">
+
+        <h1 class="text-3xl font-bold text-gray-800 mb-8">
+            Welcome back, {{ auth()->user()->name }}
+        </h1>
+
+        <div class="grid grid-cols-1 gap-6 md:grid-cols-2 xl:grid-cols-4">
+
+            {{-- START TEST --}}
+            <a href="{{ route('reading.tests.index') }}"
+               class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-blue-300 hover:shadow-xl">
+                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-blue-100 text-blue-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6v12m6-6H6" />
+                    </svg>
+                </div>
+
+                <h2 class="mb-2 text-xl font-bold text-slate-800 transition group-hover:text-blue-700">
+                    Start Reading Test
+                </h2>
+
+                <p class="text-sm leading-6 text-slate-500">
+                    Practice a full IELTS reading test with passages, questions, and timed challenge mode.
+                </p>
+            </a>
+
+            {{-- MY RESULTS --}}
+            <a href="{{ route('reading.results.index') }}"
+               class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-emerald-300 hover:shadow-xl">
+                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-emerald-100 text-emerald-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M9 17v-6m4 6V7m4 10v-3M5 19h14" />
+                    </svg>
+                </div>
+
+                <h2 class="mb-2 text-xl font-bold text-slate-800 transition group-hover:text-emerald-700">
+                    My Results
+                </h2>
+
+                <p class="text-sm leading-6 text-slate-500">
+                    Review previous attempts, track progress, and monitor your IELTS reading performance.
+                </p>
+            </a>
+
+            {{-- PRACTICE MODE --}}
+            <a href="{{ route('practice.index') }}"
+               class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-xl">
+                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-100 text-violet-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M14.752 11.168l-3.197-2.132A1 1 0 0010 9.868v4.264a1 1 0 001.555.832l3.197-2.132a1 1 0 000-1.664z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                </div>
+
+                <h2 class="mb-2 text-xl font-bold text-slate-800 transition group-hover:text-violet-700">
+                    Practice Mode
+                </h2>
+
+                <p class="text-sm leading-6 text-slate-500">
+                    Focus on specific IELTS question types and sharpen weak areas one skill at a time.
+                </p>
+            </a>
+
+            {{-- VOCABULARY --}}
+            <a href="{{ route('vocabulary.index') }}" class="group rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:border-violet-300 hover:shadow-xl">
+                <div class="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl bg-amber-100 text-amber-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5 5.03 5 3 6 3 6v13s2.03-1 4.5-1c1.746 0 3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5 18.97 5 21 6 21 6v13s-2.03-1-4.5-1c-1.746 0-3.332.477-4.5 1.253" />
+                    </svg>
+                </div>
+
+                <h2 class="mb-2 text-xl font-bold text-slate-800 transition group-hover:text-violet-700">
+                    Vocabulary
+                </h2>
+
+                <p class="text-sm leading-6 text-slate-500">
+                    Master essential IELTS vocabulary with interactive quizzes and spaced repetition.
+                </p>
+            </a>
+        </div>
+
+        {{-- STATS --}}
+        <div class="mt-10 bg-white rounded-xl shadow p-6">
+
+            <h3 class="text-xl font-semibold mb-4">
+                Your Progress
+            </h3>
+
+            <div class="grid md:grid-cols-3 gap-6">
+
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">Tests Completed</p>
+                    <p class="text-3xl font-bold text-blue-600">
+                        {{ auth()->user()->attempts()->whereNotNull('submitted_at')->count() }}
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">Best Band</p>
+                    <p class="text-3xl font-bold text-green-600">
+                        {{ auth()->user()->attempts()->max('band_score') ?? '-' }}
+                    </p>
+                </div>
+
+                <div class="text-center">
+                    <p class="text-gray-500 text-sm">Average Score</p>
+                    <p class="text-3xl font-bold text-purple-600">
+                        {{ round(auth()->user()->attempts()->avg('band_score'),1) ?? '-' }}
+                    </p>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+@endsection

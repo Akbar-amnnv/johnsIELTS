@@ -1,0 +1,86 @@
+@extends('layouts.admin')
+
+@section('content')
+
+    <h2 class="text-xl font-semibold mb-4">
+        Question Groups
+    </h2>
+
+    <p class="text-gray-500 mb-6">
+        Passage: {{ $passage->title }}
+    </p>
+
+    <a href="{{ route('reading-tests.passages.question-groups.create',[$reading_test,$passage]) }}"
+       class="px-4 py-2 bg-blue-600 text-white rounded">
+
+        Add Question Group
+
+    </a>
+
+    <table class="w-full mt-4 bg-white shadow rounded">
+
+        <thead>
+        <tr>
+            <th class="p-3 text-left">Type</th>
+            <th class="p-3 text-left">Questions</th>
+            <th class="p-3 text-left">Actions</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        @foreach($groups as $group)
+
+            <tr class="border-b">
+
+                <td class="p-3">
+
+                    {{ $group->type }}
+
+                </td>
+
+                <td class="p-3">
+
+                    {{ $group->start_number }} - {{ $group->end_number }}
+
+                </td>
+
+                <td class="p-3 flex gap-3">
+
+                    <a href="{{ route('reading-tests.passages.question-groups.edit',[$reading_test,$passage,$group]) }}"
+                       class="text-blue-600">
+
+                        Edit
+
+                    </a>
+
+                    <form method="POST"
+                          action="{{ route('reading-tests.passages.question-groups.destroy',[$reading_test,$passage,$group]) }}">
+
+                        @csrf
+                        @method('DELETE')
+
+                        <button class="text-red-600">
+
+                            Delete
+
+                        </button>
+
+                    </form>
+                    <a href="{{ route('questions.index',[$reading_test,$passage,$group]) }}"
+                       class="text-green-600">
+
+                        Questions
+
+                    </a>
+                </td>
+
+            </tr>
+
+        @endforeach
+
+        </tbody>
+
+    </table>
+
+@endsection
